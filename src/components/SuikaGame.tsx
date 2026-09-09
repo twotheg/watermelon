@@ -33,6 +33,12 @@ interface Particle {
   size: number;
 }
 
+// 영어 과일 이름 사전
+const FRUIT_NAMES_EN = [
+  "Blueberry", "Strawberry", "Grape", "Orange", "Lemon",
+  "Pear", "Apple", "Peach", "Pineapple", "Watermelon"
+];
+
 function worldToScreenY(canvasHeight: number, scale: number, worldY: number) {
   return canvasHeight - worldY * scale;
 }
@@ -50,7 +56,6 @@ function drawFruit(
   ctx.save();
   ctx.globalAlpha = ghost ? 0.65 : alpha;
 
-  // 1. 기본 바탕 (3D 구형 그라데이션)
   const grad = ctx.createRadialGradient(
     x - radius * 0.3,
     y - radius * 0.3,
@@ -68,18 +73,17 @@ function drawFruit(
   ctx.arc(x, y, radius, 0, Math.PI * 2);
   ctx.fill();
 
-  // 2. 과일별 고유 특징 무늬 및 형상 추가
   ctx.save();
   const dots = [[-0.3, -0.4], [0.2, -0.5], [-0.5, 0.1], [0.4, 0.2], [-0.2, 0.6], [0.3, 0.7], [0.6, -0.1]];
   
   switch(tier) {
-    case 0: // 블루베리
+    case 0:
       ctx.fillStyle = '#2E225A';
       ctx.beginPath();
       ctx.arc(x, y - radius * 0.8, radius * 0.25, 0, Math.PI * 2);
       ctx.fill();
       break;
-    case 1: // 딸기
+    case 1:
       ctx.fillStyle = '#FFEB3B';
       dots.forEach(([dx, dy]) => {
         ctx.beginPath(); ctx.arc(x + dx * radius, y + dy * radius, radius * 0.08, 0, Math.PI * 2); ctx.fill();
@@ -89,7 +93,7 @@ function drawFruit(
       ctx.ellipse(x, y - radius * 0.9, radius * 0.5, radius * 0.2, 0, 0, Math.PI * 2);
       ctx.fill();
       break;
-    case 2: // 포도
+    case 2:
       ctx.fillStyle = 'rgba(255,255,255,0.15)';
       [[-0.2, -0.2, 0.4], [0.3, -0.1, 0.3], [-0.1, 0.3, 0.35]].forEach(([dx, dy, r]) => {
         ctx.beginPath(); ctx.arc(x + dx * radius, y + dy * radius, radius * r, 0, Math.PI * 2); ctx.fill();
@@ -97,18 +101,18 @@ function drawFruit(
       ctx.strokeStyle = '#795548'; ctx.lineWidth = radius * 0.08;
       ctx.beginPath(); ctx.moveTo(x, y - radius * 0.9); ctx.lineTo(x, y - radius * 1.3); ctx.stroke();
       break;
-    case 3: // 오렌지
+    case 3:
       ctx.fillStyle = 'rgba(200, 100, 0, 0.4)';
       dots.forEach(([dx, dy]) => {
         ctx.beginPath(); ctx.arc(x + dx * radius, y + dy * radius, radius * 0.05, 0, Math.PI * 2); ctx.fill();
       });
       break;
-    case 4: // 레몬
+    case 4:
       ctx.fillStyle = spec.gradient[0];
       ctx.beginPath(); ctx.arc(x - radius * 0.85, y, radius * 0.3, 0, Math.PI * 2); ctx.fill();
       ctx.beginPath(); ctx.arc(x + radius * 0.85, y, radius * 0.3, 0, Math.PI * 2); ctx.fill();
       break;
-    case 5: // 배
+    case 5:
       ctx.fillStyle = 'rgba(100, 100, 0, 0.2)';
       dots.forEach(([dx, dy]) => {
         ctx.beginPath(); ctx.arc(x + dx * radius, y + dy * radius, radius * 0.06, 0, Math.PI * 2); ctx.fill();
@@ -116,19 +120,19 @@ function drawFruit(
       ctx.strokeStyle = '#795548'; ctx.lineWidth = radius * 0.08;
       ctx.beginPath(); ctx.moveTo(x, y - radius * 0.9); ctx.lineTo(x + radius * 0.15, y - radius * 1.3); ctx.stroke();
       break;
-    case 6: // 사과
+    case 6:
       ctx.strokeStyle = '#5D4037'; ctx.lineWidth = radius * 0.08;
       ctx.beginPath(); ctx.moveTo(x, y - radius * 0.9); ctx.lineTo(x + radius * 0.1, y - radius * 1.3); ctx.stroke();
       ctx.fillStyle = '#4CAF50';
       ctx.beginPath(); ctx.ellipse(x - radius * 0.2, y - radius * 1.1, radius * 0.3, radius * 0.15, Math.PI / 4, 0, Math.PI * 2); ctx.fill();
       break;
-    case 7: // 복숭아
+    case 7:
       ctx.strokeStyle = 'rgba(200, 50, 50, 0.3)'; ctx.lineWidth = radius * 0.06;
       ctx.beginPath(); ctx.arc(x - radius * 0.2, y, radius, -Math.PI * 0.4, Math.PI * 0.4); ctx.stroke();
       ctx.fillStyle = '#4CAF50';
       ctx.beginPath(); ctx.ellipse(x + radius * 0.15, y - radius * 1.0, radius * 0.25, radius * 0.12, -Math.PI / 4, 0, Math.PI * 2); ctx.fill();
       break;
-    case 8: // 파인애플
+    case 8:
       ctx.strokeStyle = 'rgba(200, 100, 0, 0.25)'; ctx.lineWidth = radius * 0.05;
       [-0.6, -0.2, 0.2, 0.6].forEach(offset => {
         ctx.beginPath(); ctx.moveTo(x - radius, y + offset * radius - radius); ctx.lineTo(x + radius, y + offset * radius + radius); ctx.stroke();
@@ -137,7 +141,7 @@ function drawFruit(
       ctx.fillStyle = '#2E7D32';
       ctx.beginPath(); ctx.moveTo(x, y - radius * 0.8); ctx.lineTo(x - radius * 0.4, y - radius * 1.4); ctx.lineTo(x, y - radius * 1.1); ctx.lineTo(x + radius * 0.4, y - radius * 1.4); ctx.fill();
       break;
-    case 9: // 수박
+    case 9:
       ctx.strokeStyle = 'rgba(20, 70, 20, 0.5)'; ctx.lineWidth = radius * 0.15;
       [-0.45, 0, 0.45].forEach(offset => {
         ctx.beginPath();
@@ -148,7 +152,6 @@ function drawFruit(
   }
   ctx.restore();
 
-  // 3. 빛 반사 하이라이트
   ctx.fillStyle = 'rgba(255,255,255,0.3)';
   ctx.beginPath();
   ctx.ellipse(x - radius * 0.35, y - radius * 0.35, radius * 0.22, radius * 0.12, -Math.PI / 4, 0, Math.PI * 2);
@@ -170,7 +173,6 @@ function drawNextFruitPreview(canvas: HTMLCanvasElement, tiers: number[], scale:
   ctx.scale(dpr, dpr);
   ctx.clearRect(0, 0, w, h);
   
-  // 실제 게임 스케일과 동일하게 좌표계를 맞춤 (실제 크기로 그리기 위함)
   ctx.translate(0, h);
   ctx.scale(scale, -scale);
   
@@ -179,11 +181,10 @@ function drawNextFruitPreview(canvas: HTMLCanvasElement, tiers: number[], scale:
   
   tiers.forEach((tier, i) => {
     const r = FRUITS[tier].radius;
-    currentX += r + 0.2; // 왼쪽 여백 + 반지름
+    currentX += r + 0.2; 
     const alpha = i === 0 ? 1 : i === 1 ? 0.6 : 0.3;
-    // 중앙(worldH / 2)에 실제 게임 크기 그대로 렌더링
     drawFruit(ctx, currentX, worldH / 2, r, tier, false, alpha);
-    currentX += r; // 다음 과일을 위해 x좌표 이동
+    currentX += r; 
   });
 }
 
@@ -219,13 +220,18 @@ export default function SuikaGame() {
   const [bestScore, setBestScore] = useState(0);
   const [nextTiers, setNextTiers] = useState<number[]>([0, 0, 0]);
   const [isSoundOn, setIsSoundOn] = useState(true);
+  const [language, setLanguage] = useState<'ko' | 'en'>('ko'); // 언어 상태 추가
   const [gameState, setGameState] = useState<'ready' | 'playing' | 'over'>('ready');
-  const [playerName, setPlayerName] = useState('나');
-  const [rankMessage, setRankMessage] = useState('');
+  const [playerName, setPlayerName] = useState('');
+  const [rankStatus, setRankStatus] = useState<'newBest' | 'saved' | 'error' | ''>('');
 
   const toggleSound = () => {
     setIsSoundOn(!isSoundOn);
     isSoundOnRef.current = !isSoundOn;
+  };
+
+  const toggleLanguage = () => {
+    setLanguage(prev => prev === 'ko' ? 'en' : 'ko');
   };
 
   const initAudio = useCallback(() => {
@@ -427,7 +433,7 @@ export default function SuikaGame() {
     scoreRef.current = 0;
     dropsRef.current = 0;
     setScore(0);
-    setRankMessage('');
+    setRankStatus('');
     gameOverRef.current = false;
     canSpawnRef.current = true;
     spawnCooldownRef.current = 0;
@@ -555,20 +561,23 @@ export default function SuikaGame() {
       await fetch('/api/score', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: playerName || '익명', score: scoreRef.current }),
+        body: JSON.stringify({ 
+          name: playerName || (language === 'ko' ? '익명' : 'Anonymous'), 
+          score: scoreRef.current 
+        }),
       });
       const res = await fetch('/api/score?limit=1');
       const data = await res.json();
       const top = data.scores?.[0]?.score ?? 0;
       if (scoreRef.current >= top) {
-        setRankMessage('🏆 현재 최고 기록입니다!');
+        setRankStatus('newBest');
       } else {
-        setRankMessage('기록이 저장되었어요!');
+        setRankStatus('saved');
       }
     } catch {
-      setRankMessage('기록 저장에 실패했어요.');
+      setRankStatus('error');
     }
-  }, [playerName]);
+  }, [playerName, language]);
 
   const updatePointerX = useCallback((clientX: number) => {
     const canvas = canvasRef.current;
@@ -723,7 +732,6 @@ export default function SuikaGame() {
       }
       ctx.globalAlpha = 1;
 
-      // 매 프레임마다 실제 게임 스케일로 다음 과일 캔버스 렌더링
       if (previewRef.current && scaleRef.current > 0) {
         drawNextFruitPreview(previewRef.current, nextTiers, scaleRef.current);
       }
@@ -739,10 +747,20 @@ export default function SuikaGame() {
     };
   }, [gameState, checkGameOver, getScale, nextTiers]);
 
-  const installApp = async () => {
-    if (!deferredInstallPrompt) return;
-    await deferredInstallPrompt.prompt();
-    setDeferredInstallPrompt(null);
+  // 언어팩 텍스트 
+  const text = {
+    title: language === 'ko' ? '과일 합치기' : 'Fruit Merge',
+    best: language === 'ko' ? '최고:' : 'Best:',
+    score: language === 'ko' ? '점수:' : 'Score:',
+    next: language === 'ko' ? '다음 과일' : 'Next',
+    desc1: language === 'ko' ? '작은 과일부터 시작해서' : 'Start with small fruits,',
+    desc2: language === 'ko' ? '같은 과일끼리 합쳐 수박을 만들어 보세요!' : 'merge them to make a watermelon!',
+    start: language === 'ko' ? '게임 시작' : 'Start Game',
+    gameOver: language === 'ko' ? '게임 오버' : 'Game Over',
+    name: language === 'ko' ? '이름' : 'Name',
+    save: language === 'ko' ? '기록 저장' : 'Save Score',
+    retry: language === 'ko' ? '다시 하기' : 'Play Again',
+    install: language === 'ko' ? '📲 홈 화면에 설치' : '📲 Install App'
   };
 
   return (
@@ -750,22 +768,26 @@ export default function SuikaGame() {
       <header className="flex items-center justify-between px-4 py-3">
         <div className="flex items-center gap-2">
           <span className="text-2xl">🍉</span>
-          <h1 className="text-lg font-bold text-green-700">과일 합치기</h1>
+          <h1 className="text-lg font-bold text-green-700">{text.title}</h1>
         </div>
-        <div className="flex items-center gap-3 text-sm font-semibold">
-          <button onClick={toggleSound} className="text-2xl">
+        <div className="flex items-center gap-2 text-sm font-semibold">
+          {/* 한/영 변환 버튼 */}
+          <button onClick={toggleLanguage} className="rounded-lg bg-slate-200 px-2 py-1 text-xs font-bold text-slate-600 shadow hover:bg-slate-300">
+            {language === 'ko' ? '한/EN' : 'EN/한'}
+          </button>
+          <button onClick={toggleSound} className="text-2xl mr-1">
             {isSoundOn ? '🔊' : '🔇'}
           </button>
-          <div className="rounded-full bg-white px-3 py-1 shadow">최고: {bestScore.toLocaleString()}</div>
-          <div className="rounded-full bg-green-100 px-3 py-1 text-green-800 shadow">점수: {score.toLocaleString()}</div>
+          <div className="rounded-full bg-white px-2 py-1 shadow">{text.best} {bestScore.toLocaleString()}</div>
+          <div className="rounded-full bg-green-100 px-2 py-1 text-green-800 shadow">{text.score} {score.toLocaleString()}</div>
         </div>
       </header>
 
       <main className="relative flex-1 px-4 pb-4 flex flex-col gap-3">
         
-        {/* Next Fruit Preview (게임 보드 바로 위로 이동됨) */}
+        {/* Next Fruit Preview */}
         <div className="mx-auto w-full max-w-[420px] flex items-center rounded-xl bg-white px-4 py-2 shadow h-[80px]">
-          <span className="text-sm font-extrabold text-slate-700 whitespace-nowrap w-[60px]">다음 과일</span>
+          <span className="text-sm font-extrabold text-slate-700 whitespace-nowrap w-[65px]">{text.next}</span>
           <div className="flex-1 h-full pl-2">
             <canvas ref={previewRef} className="h-full w-full" />
           </div>
@@ -788,43 +810,47 @@ export default function SuikaGame() {
           {gameState === 'ready' && (
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 p-6 text-center text-white backdrop-blur-sm">
               <div className="text-6xl mb-4">🍉</div>
-              <h2 className="mb-2 text-3xl font-bold">과일 합치기</h2>
+              <h2 className="mb-2 text-3xl font-bold">{text.title}</h2>
               <p className="mb-6 max-w-[260px] text-sm leading-relaxed opacity-90">
-                작은 과일부터 시작해서<br />같은 과일끼리 합쳐 수박을 만들어 보세요!
+                {text.desc1}<br />{text.desc2}
               </p>
               <button
                 onClick={startGame}
                 className="rounded-full bg-green-500 px-8 py-3 font-bold text-white shadow-lg transition hover:scale-105 hover:bg-green-600 active:scale-95"
               >
-                게임 시작
+                {text.start}
               </button>
             </div>
           )}
 
           {gameState === 'over' && (
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 p-6 text-center text-white backdrop-blur-sm">
-              <h2 className="mb-1 text-3xl font-bold">게임 오버</h2>
-              <p className="mb-4 text-2xl font-semibold text-yellow-300">{score.toLocaleString()}점</p>
+              <h2 className="mb-1 text-3xl font-bold">{text.gameOver}</h2>
+              <p className="mb-4 text-2xl font-semibold text-yellow-300">{score.toLocaleString()}</p>
               <input
                 value={playerName}
                 onChange={(e) => setPlayerName(e.target.value)}
                 maxLength={10}
                 className="mb-3 w-40 rounded-lg px-3 py-2 text-center text-slate-900 outline-none focus:ring-2 focus:ring-green-400"
-                placeholder="이름"
+                placeholder={text.name}
               />
-              {rankMessage && <p className="mb-2 text-sm text-green-200">{rankMessage}</p>}
-              <div className="flex gap-3">
+              
+              {rankStatus === 'newBest' && <p className="mb-2 text-sm text-green-200">{language === 'ko' ? '🏆 현재 최고 기록입니다!' : '🏆 New High Score!'}</p>}
+              {rankStatus === 'saved' && <p className="mb-2 text-sm text-green-200">{language === 'ko' ? '기록이 저장되었어요!' : 'Score saved!'}</p>}
+              {rankStatus === 'error' && <p className="mb-2 text-sm text-red-300">{language === 'ko' ? '기록 저장에 실패했어요.' : 'Failed to save score.'}</p>}
+
+              <div className="flex gap-3 mt-2">
                 <button
                   onClick={saveScore}
                   className="rounded-full bg-blue-500 px-5 py-2 font-semibold shadow hover:bg-blue-600"
                 >
-                  기록 저장
+                  {text.save}
                 </button>
                 <button
                   onClick={startGame}
                   className="rounded-full bg-green-500 px-5 py-2 font-semibold shadow hover:bg-green-600"
                 >
-                  다시 하기
+                  {text.retry}
                 </button>
               </div>
             </div>
@@ -838,7 +864,7 @@ export default function SuikaGame() {
               onClick={installApp}
               className="rounded-full bg-purple-500 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-purple-600 mb-2"
             >
-              📲 홈 화면에 설치
+              {text.install}
             </button>
           )}
           
