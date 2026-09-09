@@ -14,7 +14,7 @@ export default function PushManager() {
   const [subscription, setSubscription] = useState<PushSubscription | null>(null);
   const [publicKey, setPublicKey] = useState<string | null>(null);
   const [pushSecret, setPushSecret] = useState('');
-  const [message, setMessage] = useState('수박 합치기! 새 기록에 도전해 보세요 🍉');
+  const [message, setMessage] = useState('과일 합치기! 새 기록에 도전해 보세요 🍉');
   const [status, setStatus] = useState('');
 
   useEffect(() => {
@@ -83,7 +83,7 @@ export default function PushManager() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          title: '수박 합치기',
+          title: '과일 합치기',
           message,
           secret: pushSecret,
         }),
