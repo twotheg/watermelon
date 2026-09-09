@@ -43,87 +43,64 @@ function drawFruit(
   y: number,
   radius: number,
   tier: number,
-  ghost = false
+  ghost = false,
+  alpha = 1
 ) {
   const spec = FRUITS[tier];
   ctx.save();
-  ctx.globalAlpha = ghost ? 0.65 : 1;
+  ctx.globalAlpha = ghost ? 0.65 : alpha;
 
   const grad = ctx.createRadialGradient(
-    x - radius * 0.25,
-    y + radius * 0.25,
+    x - radius * 0.3,
+    y - radius * 0.3,
     radius * 0.1,
     x,
     y,
     radius
   );
-  grad.addColorStop(0, spec.gradient[0]);
+  grad.addColorStop(0, '#ffffff');
+  grad.addColorStop(0.2, spec.gradient[0]);
   grad.addColorStop(1, spec.gradient[1]);
+  
   ctx.fillStyle = grad;
   ctx.beginPath();
   ctx.arc(x, y, radius, 0, Math.PI * 2);
   ctx.fill();
 
-  // Shine
-  ctx.fillStyle = 'rgba(255,255,255,0.28)';
+  ctx.fillStyle = 'rgba(255,255,255,0.3)';
   ctx.beginPath();
   ctx.ellipse(
     x - radius * 0.35,
-    y + radius * 0.35,
+    y - radius * 0.35,
     radius * 0.22,
     radius * 0.12,
-    Math.PI / 4,
+    -Math.PI / 4,
     0,
     Math.PI * 2
   );
   ctx.fill();
 
-  // Face
-  ctx.fillStyle = 'rgba(0,0,0,0.85)';
-  const eyeR = radius * 0.12;
-  const eyeOffsetX = radius * 0.28;
-  const eyeOffsetY = y + radius * 0.08;
-  ctx.beginPath();
-  ctx.arc(x - eyeOffsetX, eyeOffsetY, eyeR, 0, Math.PI * 2);
-  ctx.arc(x + eyeOffsetX, eyeOffsetY, eyeR, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Eye highlights
-  ctx.fillStyle = 'rgba(255,255,255,0.9)';
-  ctx.beginPath();
-  ctx.arc(x - eyeOffsetX + eyeR * 0.3, eyeOffsetY + eyeR * 0.3, eyeR * 0.35, 0, Math.PI * 2);
-  ctx.arc(x + eyeOffsetX + eyeR * 0.3, eyeOffsetY + eyeR * 0.3, eyeR * 0.35, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Cheeks
-  ctx.fillStyle = 'rgba(255,150,150,0.45)';
-  ctx.beginPath();
-  ctx.arc(x - radius * 0.45, y - radius * 0.05, radius * 0.14, 0, Math.PI * 2);
-  ctx.arc(x + radius * 0.45, y - radius * 0.05, radius * 0.14, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Smile
-  ctx.strokeStyle = 'rgba(0,0,0,0.8)';
-  ctx.lineWidth = radius * 0.06;
-  ctx.lineCap = 'round';
-  ctx.beginPath();
-  ctx.arc(x, y - radius * 0.05, radius * 0.22, 0.25 * Math.PI, 0.75 * Math.PI);
-  ctx.stroke();
-
   ctx.restore();
 }
 
-function drawNextFruitPreview(canvas: HTMLCanvasElement, tier: number) {
+function drawNextFruitPreview(canvas: HTMLCanvasElement, tiers: number[]) {
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
   const dpr = typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1;
-  const size = canvas.clientWidth || 64;
-  canvas.width = size * dpr;
-  canvas.height = size * dpr;
+  const w = canvas.clientWidth || 150;
+  const h = canvas.clientHeight || 50;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
   ctx.scale(dpr, dpr);
-  ctx.clearRect(0, 0, size, size);
+  ctx.clearRect(0, 0, w, h);
+  
+  const size = 40;
   const radius = (size / 2) * 0.78;
-  drawFruit(ctx, size / 2, size / 2, radius, tier);
+  
+  tiers.forEach((tier, i) => {
+    const alpha = i === 0 ? 1 : i === 1 ? 0.6 : 0.3;
+    drawFruit(ctx, 25 + i * 45, h / 2, radius, tier, false, alpha);
+  });
 }
 
 export default function SuikaGame() {
@@ -153,10 +130,56 @@ export default function SuikaGame() {
 
   const [score, setScore] = useState(0);
   const [bestScore, setBestScore] = useState(0);
-  const [nextTier, setNextTier] = useState(0);
+  const [nextTiers, setNextTiers] = useState<number[]>([0, 0, 0]);
+  const [isSoundOn, setIsSoundOn] = useState(true);
   const [gameState, setGameState] = useState<'ready' | 'playing' | 'over'>('ready');
   const [playerName, setPlayerName] = useState('나');
   const [rankMessage, setRankMessage] = useState('');
+
+  
+  // 5. Sound functions
+  const playSound = useCallback((type: 'drop' | 'merge') => {
+    if (!isSoundOn) return;
+    try {
+      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      
+      if (type === 'drop') {
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(600, audioCtx.currentTime);
+        gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+        oscillator.start();
+        oscillator.stop(audioCtx.currentTime + 0.1);
+      } else if (type === 'merge') {
+        oscillator.type = 'square';
+        oscillator.frequency.setValueAtTime(400, audioCtx.currentTime);
+        gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+        
+        setTimeout(() => {
+          const osc2 = audioCtx.createOscillator();
+          const gain2 = audioCtx.createGain();
+          osc2.type = 'sine';
+          osc2.frequency.setValueAtTime(800, audioCtx.currentTime);
+          gain2.gain.setValueAtTime(0.1, audioCtx.currentTime);
+          gain2.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+          osc2.connect(gain2);
+          gain2.connect(audioCtx.destination);
+          osc2.start();
+          osc2.stop(audioCtx.currentTime + 0.15);
+        }, 50);
+        oscillator.start();
+        oscillator.stop(audioCtx.currentTime + 0.1);
+      }
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+    } catch (e) {
+      console.error(e);
+    }
+  }, [isSoundOn]);
 
   const getScale = useCallback(() => {
     const canvas = canvasRef.current;
@@ -247,6 +270,7 @@ export default function SuikaGame() {
       overTimesRef.current.delete(idA);
       overTimesRef.current.delete(idB);
 
+      playSound('merge');
       const merged = spawnFruit(newTier, midX, midY, true);
       if (merged) {
         merged.body.setLinearVelocity(Vec2(0, 3));
@@ -319,9 +343,13 @@ export default function SuikaGame() {
     setupWorld();
 
     const t0 = randomSpawnTier(getMaxSpawnTier(0, 0));
-    const t1 = randomSpawnTier(getMaxSpawnTier(0, 0));
-    nextTierRef.current = t1;
-    setNextTier(t1);
+    const nextList = [
+      randomSpawnTier(getMaxSpawnTier(0, 0)),
+      randomSpawnTier(getMaxSpawnTier(0, 0)),
+      randomSpawnTier(getMaxSpawnTier(0, 0))
+    ];
+    nextTierRef.current = nextList[0];
+    setNextTiers(nextList);
 
     const fruit = spawnFruit(t0, BOARD_WIDTH / 2, worldHeightRef.current - FRUITS[t0].radius - 0.4, false);
     if (fruit) {
@@ -344,6 +372,7 @@ export default function SuikaGame() {
     world.destroyBody(current.body);
     bodiesRef.current.delete(current.id);
 
+    playSound('drop');
     const dynamic = spawnFruit(current.tier, x, y, true);
     if (!dynamic) return;
 
@@ -355,10 +384,12 @@ export default function SuikaGame() {
     // Schedule next spawn
     const spawnNextFruit = () => {
       const maxTier = getMaxSpawnTier(scoreRef.current, dropsRef.current);
+      setNextTiers((prev) => {
+        const nextList = [...prev.slice(1), randomSpawnTier(maxTier)];
+        nextTierRef.current = nextList[0];
+        return nextList;
+      });
       const tier = nextTierRef.current;
-      const next = randomSpawnTier(maxTier);
-      nextTierRef.current = next;
-      setNextTier(next);
 
       const startX = clamp(targetXRef.current, FRUITS[tier].radius, BOARD_WIDTH - FRUITS[tier].radius);
       const startY = worldHeightRef.current - FRUITS[tier].radius - 0.4;
@@ -413,6 +444,7 @@ export default function SuikaGame() {
           setGameState('over');
           if (scoreRef.current > bestScore) {
             setBestScore(scoreRef.current);
+            localStorage.setItem('watermelonHighScore', scoreRef.current.toString());
           }
           return;
         }
@@ -470,13 +502,19 @@ export default function SuikaGame() {
     }
   }, [dropCurrentFruit, gameState]);
 
-  // Load best score
-  useEffect(() => {
+    useEffect(() => {
+    const localBest = localStorage.getItem('watermelonHighScore');
+    if (localBest) {
+      setBestScore(parseInt(localBest));
+    }
     fetch('/api/score?limit=1')
       .then((r) => r.json())
       .then((data) => {
         const top = data.scores?.[0]?.score ?? 0;
-        setBestScore(top);
+        if (top > parseInt(localBest || '0')) {
+          setBestScore(top);
+          localStorage.setItem('watermelonHighScore', top.toString());
+        }
       })
       .catch(() => {});
   }, []);
@@ -626,6 +664,9 @@ export default function SuikaGame() {
           <h1 className="text-lg font-bold text-green-700">수박 합치기</h1>
         </div>
         <div className="flex items-center gap-3 text-sm font-semibold">
+          <button onClick={() => setIsSoundOn(!isSoundOn)} className="text-2xl">
+            {isSoundOn ? '🔊' : '🔇'}
+          </button>
           <div className="rounded-full bg-white px-3 py-1 shadow">최고: {bestScore.toLocaleString()}</div>
           <div className="rounded-full bg-green-100 px-3 py-1 text-green-800 shadow">점수: {score.toLocaleString()}</div>
         </div>
@@ -711,12 +752,10 @@ export default function SuikaGame() {
               📲 홈 화면에 설치
             </button>
           )}
-          <a
-            href="/api/download"
-            className="rounded-full bg-slate-700 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-slate-800"
-          >
-            📦 소스 코드 다운로드
-          </a>
+          {/* Ad Banner replacing source code download */}
+          <div className="w-full max-w-[320px] h-[50px] bg-slate-200 flex items-center justify-center text-slate-500 text-sm font-bold rounded-lg shadow-inner">
+            Ad Banner Area
+          </div>
         </div>
       </main>
     </div>
