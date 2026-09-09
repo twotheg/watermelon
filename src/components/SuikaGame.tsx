@@ -50,7 +50,6 @@ function drawFruit(
   ctx.save();
   ctx.globalAlpha = ghost ? 0.65 : alpha;
 
-  // 1. 기본 바탕 (3D 구형 그라데이션)
   const grad = ctx.createRadialGradient(
     x - radius * 0.3,
     y - radius * 0.3,
@@ -68,18 +67,17 @@ function drawFruit(
   ctx.arc(x, y, radius, 0, Math.PI * 2);
   ctx.fill();
 
-  // 2. 과일별 고유 특징 무늬 및 형상 추가
   ctx.save();
   const dots = [[-0.3, -0.4], [0.2, -0.5], [-0.5, 0.1], [0.4, 0.2], [-0.2, 0.6], [0.3, 0.7], [0.6, -0.1]];
   
   switch(tier) {
-    case 0: // 블루베리
+    case 0:
       ctx.fillStyle = '#2E225A';
       ctx.beginPath();
       ctx.arc(x, y - radius * 0.8, radius * 0.25, 0, Math.PI * 2);
       ctx.fill();
       break;
-    case 1: // 딸기
+    case 1:
       ctx.fillStyle = '#FFEB3B';
       dots.forEach(([dx, dy]) => {
         ctx.beginPath(); ctx.arc(x + dx * radius, y + dy * radius, radius * 0.08, 0, Math.PI * 2); ctx.fill();
@@ -89,7 +87,7 @@ function drawFruit(
       ctx.ellipse(x, y - radius * 0.9, radius * 0.5, radius * 0.2, 0, 0, Math.PI * 2);
       ctx.fill();
       break;
-    case 2: // 포도
+    case 2:
       ctx.fillStyle = 'rgba(255,255,255,0.15)';
       [[-0.2, -0.2, 0.4], [0.3, -0.1, 0.3], [-0.1, 0.3, 0.35]].forEach(([dx, dy, r]) => {
         ctx.beginPath(); ctx.arc(x + dx * radius, y + dy * radius, radius * r, 0, Math.PI * 2); ctx.fill();
@@ -97,18 +95,18 @@ function drawFruit(
       ctx.strokeStyle = '#795548'; ctx.lineWidth = radius * 0.08;
       ctx.beginPath(); ctx.moveTo(x, y - radius * 0.9); ctx.lineTo(x, y - radius * 1.3); ctx.stroke();
       break;
-    case 3: // 오렌지
+    case 3:
       ctx.fillStyle = 'rgba(200, 100, 0, 0.4)';
       dots.forEach(([dx, dy]) => {
         ctx.beginPath(); ctx.arc(x + dx * radius, y + dy * radius, radius * 0.05, 0, Math.PI * 2); ctx.fill();
       });
       break;
-    case 4: // 레몬
+    case 4:
       ctx.fillStyle = spec.gradient[0];
       ctx.beginPath(); ctx.arc(x - radius * 0.85, y, radius * 0.3, 0, Math.PI * 2); ctx.fill();
       ctx.beginPath(); ctx.arc(x + radius * 0.85, y, radius * 0.3, 0, Math.PI * 2); ctx.fill();
       break;
-    case 5: // 배
+    case 5:
       ctx.fillStyle = 'rgba(100, 100, 0, 0.2)';
       dots.forEach(([dx, dy]) => {
         ctx.beginPath(); ctx.arc(x + dx * radius, y + dy * radius, radius * 0.06, 0, Math.PI * 2); ctx.fill();
@@ -116,19 +114,19 @@ function drawFruit(
       ctx.strokeStyle = '#795548'; ctx.lineWidth = radius * 0.08;
       ctx.beginPath(); ctx.moveTo(x, y - radius * 0.9); ctx.lineTo(x + radius * 0.15, y - radius * 1.3); ctx.stroke();
       break;
-    case 6: // 사과
+    case 6:
       ctx.strokeStyle = '#5D4037'; ctx.lineWidth = radius * 0.08;
       ctx.beginPath(); ctx.moveTo(x, y - radius * 0.9); ctx.lineTo(x + radius * 0.1, y - radius * 1.3); ctx.stroke();
       ctx.fillStyle = '#4CAF50';
       ctx.beginPath(); ctx.ellipse(x - radius * 0.2, y - radius * 1.1, radius * 0.3, radius * 0.15, Math.PI / 4, 0, Math.PI * 2); ctx.fill();
       break;
-    case 7: // 복숭아
+    case 7:
       ctx.strokeStyle = 'rgba(200, 50, 50, 0.3)'; ctx.lineWidth = radius * 0.06;
       ctx.beginPath(); ctx.arc(x - radius * 0.2, y, radius, -Math.PI * 0.4, Math.PI * 0.4); ctx.stroke();
       ctx.fillStyle = '#4CAF50';
       ctx.beginPath(); ctx.ellipse(x + radius * 0.15, y - radius * 1.0, radius * 0.25, radius * 0.12, -Math.PI / 4, 0, Math.PI * 2); ctx.fill();
       break;
-    case 8: // 파인애플
+    case 8:
       ctx.strokeStyle = 'rgba(200, 100, 0, 0.25)'; ctx.lineWidth = radius * 0.05;
       [-0.6, -0.2, 0.2, 0.6].forEach(offset => {
         ctx.beginPath(); ctx.moveTo(x - radius, y + offset * radius - radius); ctx.lineTo(x + radius, y + offset * radius + radius); ctx.stroke();
@@ -137,7 +135,7 @@ function drawFruit(
       ctx.fillStyle = '#2E7D32';
       ctx.beginPath(); ctx.moveTo(x, y - radius * 0.8); ctx.lineTo(x - radius * 0.4, y - radius * 1.4); ctx.lineTo(x, y - radius * 1.1); ctx.lineTo(x + radius * 0.4, y - radius * 1.4); ctx.fill();
       break;
-    case 9: // 수박
+    case 9:
       ctx.strokeStyle = 'rgba(20, 70, 20, 0.5)'; ctx.lineWidth = radius * 0.15;
       [-0.45, 0, 0.45].forEach(offset => {
         ctx.beginPath();
@@ -148,7 +146,6 @@ function drawFruit(
   }
   ctx.restore();
 
-  // 3. 빛 반사 하이라이트
   ctx.fillStyle = 'rgba(255,255,255,0.3)';
   ctx.beginPath();
   ctx.ellipse(x - radius * 0.35, y - radius * 0.35, radius * 0.22, radius * 0.12, -Math.PI / 4, 0, Math.PI * 2);
@@ -200,9 +197,11 @@ export default function SuikaGame() {
   const worldHeightRef = useRef(1);
   const targetXRef = useRef(BOARD_WIDTH / 2);
   const pointerDownRef = useRef(false);
-  const audioCtxRef = useRef<AudioContext | null>(null); // 오디오 컨텍스트 재사용
-  const [deferredInstallPrompt, setDeferredInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const isSoundOnRef = useRef(true); // 물리 엔진과 동기화를 위한 Ref 추가
 
+  const [deferredInstallPrompt, setDeferredInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [score, setScore] = useState(0);
   const [bestScore, setBestScore] = useState(0);
   const [nextTiers, setNextTiers] = useState<number[]>([0, 0, 0]);
@@ -211,7 +210,12 @@ export default function SuikaGame() {
   const [playerName, setPlayerName] = useState('나');
   const [rankMessage, setRankMessage] = useState('');
 
-  // 브라우저 오디오 엔진 초기화 (끊김 방지)
+  // 소리 버튼 클릭 시 상태와 Ref를 동시에 업데이트
+  const toggleSound = () => {
+    setIsSoundOn(!isSoundOn);
+    isSoundOnRef.current = !isSoundOn;
+  };
+
   const initAudio = useCallback(() => {
     if (!audioCtxRef.current) {
       audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
@@ -221,12 +225,15 @@ export default function SuikaGame() {
     }
   }, []);
 
-  // 게임 효과음 
   const playSound = useCallback((type: 'drop' | 'merge') => {
-    if (!isSoundOn) return;
+    // 상태 대신 최신 값을 보장하는 Ref 사용 (물리 엔진 에러 해결)
+    if (!isSoundOnRef.current) return;
     initAudio();
     const ctx = audioCtxRef.current;
     if (!ctx) return;
+    
+    // 소리 끊김 방지를 위해 매번 확인
+    if (ctx.state === 'suspended') ctx.resume();
 
     try {
       const osc = ctx.createOscillator();
@@ -236,7 +243,6 @@ export default function SuikaGame() {
       const now = ctx.currentTime;
 
       if (type === 'drop') {
-        // 귀여운 뿅! 소리 (음이 빠르게 떨어짐)
         osc.type = 'sine';
         osc.frequency.setValueAtTime(600, now);
         osc.frequency.exponentialRampToValueAtTime(100, now + 0.1);
@@ -245,12 +251,11 @@ export default function SuikaGame() {
         osc.start(now);
         osc.stop(now + 0.1);
       } else if (type === 'merge') {
-        // 경쾌한 띠로롱~ 화음 (레벨업 느낌)
         osc.type = 'triangle';
-        osc.frequency.setValueAtTime(523.25, now); // 도
-        osc.frequency.setValueAtTime(659.25, now + 0.05); // 미
-        osc.frequency.setValueAtTime(783.99, now + 0.1); // 솔
-        osc.frequency.setValueAtTime(1046.50, now + 0.15); // 높은 도
+        osc.frequency.setValueAtTime(523.25, now); 
+        osc.frequency.setValueAtTime(659.25, now + 0.05); 
+        osc.frequency.setValueAtTime(783.99, now + 0.1); 
+        osc.frequency.setValueAtTime(1046.50, now + 0.15); 
 
         gain.gain.setValueAtTime(0.3, now);
         gain.gain.linearRampToValueAtTime(0.1, now + 0.2);
@@ -262,7 +267,7 @@ export default function SuikaGame() {
     } catch (e) {
       console.error(e);
     }
-  }, [isSoundOn, initAudio]);
+  }, [initAudio]);
 
   const getScale = useCallback(() => {
     const canvas = canvasRef.current;
@@ -371,7 +376,6 @@ export default function SuikaGame() {
     const key = idA < idB ? `${idA}-${idB}` : `${idB}-${idA}`;
     if (pendingMergesRef.current.has(key)) return;
     pendingMergesRef.current.add(key);
-    // Defer merge to avoid Box2D step mutation
     setTimeout(() => {
       handleMerge(idA, idB);
       pendingMergesRef.current.delete(key);
@@ -556,7 +560,6 @@ export default function SuikaGame() {
     }
   }, [playerName]);
 
-  // 터치 위치 동기화 함수
   const updatePointerX = useCallback((clientX: number) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -564,7 +567,6 @@ export default function SuikaGame() {
     const x = (clientX - rect.left) / scaleRef.current;
     targetXRef.current = clamp(x, 0, BOARD_WIDTH);
     
-    // 즉시 과일을 손가락 위치로 이동
     if (currentFruitRef.current && currentFruitRef.current.body.getType() === 'static') {
       const spec = FRUITS[currentFruitRef.current.tier];
       const nx = clamp(targetXRef.current, spec.radius, BOARD_WIDTH - spec.radius);
@@ -577,8 +579,8 @@ export default function SuikaGame() {
   }, [updatePointerX]);
 
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
-    initAudio(); // 터치 시 오디오 엔진 잠금 해제
-    updatePointerX(e.clientX); // 터치한 곳으로 바로 이동
+    initAudio(); 
+    updatePointerX(e.clientX); 
     pointerDownRef.current = true;
   }, [initAudio, updatePointerX]);
 
@@ -742,7 +744,7 @@ export default function SuikaGame() {
           <h1 className="text-lg font-bold text-green-700">과일 합치기</h1>
         </div>
         <div className="flex items-center gap-3 text-sm font-semibold">
-          <button onClick={() => setIsSoundOn(!isSoundOn)} className="text-2xl">
+          <button onClick={toggleSound} className="text-2xl">
             {isSoundOn ? '🔊' : '🔇'}
           </button>
           <div className="rounded-full bg-white px-3 py-1 shadow">최고: {bestScore.toLocaleString()}</div>
@@ -769,7 +771,7 @@ export default function SuikaGame() {
               <div className="text-6xl mb-4">🍉</div>
               <h2 className="mb-2 text-3xl font-bold">과일 합치기</h2>
               <p className="mb-6 max-w-[260px] text-sm leading-relaxed opacity-90">
-                작은 블루베리부터 시작해서<br />같은 과일끼리 합쳐 수박을 만들어 보세요!
+                작은 과일부터 시작해서<br />같은 과일끼리 합쳐 수박을 만들어 보세요!
               </p>
               <button
                 onClick={startGame}
@@ -830,7 +832,6 @@ export default function SuikaGame() {
               📲 홈 화면에 설치
             </button>
           )}
-          {/* 애드센스 배너 영역 */}
           <div className="w-full max-w-[320px] h-[50px] bg-slate-200 flex items-center justify-center rounded-lg shadow-inner overflow-hidden">
             <ins className="adsbygoogle"
                  style={{ display: "inline-block", width: "320px", height: "50px" }}
