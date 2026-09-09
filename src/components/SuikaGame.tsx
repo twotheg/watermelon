@@ -646,9 +646,9 @@ export default function SuikaGame() {
   // Update next preview
   useEffect(() => {
     if (previewRef.current) {
-      drawNextFruitPreview(previewRef.current, nextTier);
+      drawNextFruitPreview(previewRef.current, nextTiers);
     }
-  }, [nextTier]);
+  }, [nextTiers]);
 
   const installApp = async () => {
     if (!deferredInstallPrompt) return;
@@ -733,11 +733,11 @@ export default function SuikaGame() {
         </div>
 
         <div className="mt-3 flex items-center justify-between rounded-xl bg-white p-3 shadow">
-          <div className="flex items-center gap-3">
-            <span className="text-sm font-medium text-slate-600">다음 과일</span>
-            <canvas ref={previewRef} className="h-12 w-12" />
-            <span className="text-sm font-bold text-slate-800">{FRUITS[nextTier]?.name}</span>
-          </div>
+         <div className="flex items-center gap-3">
+        <span className="text-sm font-medium text-slate-600">다음 과일</span>
+        <canvas ref={previewRef} className="h-[50px] w-[150px]" />
+        <span className="text-sm font-bold text-slate-800">{FRUITS[nextTiers[0]]?.name}</span>
+      </div>
           <div className="text-xs text-slate-500">
             {gameState === 'playing' ? '터치 후 떼면 떨어져요' : ''}
           </div>
