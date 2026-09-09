@@ -1,6 +1,6 @@
 {
-  "name": "수박 합치기 - Suika Merge",
-  "short_name": "수박합치기",
+  "name": "과일 합치기 - Fruit Merge",
+  "short_name": "과일합치기",
   "description": "귀여운 과일을 떨어뜨려 합치고 최종 수박을 만드는 물리 퍼즐 게임입니다.",
   "start_url": "/",
   "display": "standalone",
