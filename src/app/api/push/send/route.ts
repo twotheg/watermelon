@@ -31,7 +31,7 @@ export async function POST(request: Request) {
   const subscriptions = await db.select().from(pushSubscriptions);
 
   const payload = JSON.stringify({
-    title: parsed.title || "수박 합치기",
+    title: parsed.title || "과일 합치기",
     body: parsed.message || "새로운 기록에 도전해 보세요! 🍉",
     url: parsed.url || "/",
   });
