@@ -136,7 +136,6 @@ export default function SuikaGame() {
   const [playerName, setPlayerName] = useState('나');
   const [rankMessage, setRankMessage] = useState('');
 
-  
   // 5. Sound functions
   const playSound = useCallback((type: 'drop' | 'merge') => {
     if (!isSoundOn) return;
@@ -281,7 +280,7 @@ export default function SuikaGame() {
         setScore(scoreRef.current);
       }
     },
-    [spawnFruit, addParticles]
+    [spawnFruit, addParticles, playSound]
   );
 
   const queueMerge = useCallback((idA: number, idB: number) => {
@@ -419,7 +418,7 @@ export default function SuikaGame() {
       }
     };
     requestAnimationFrame(waitForNext);
-  }, [spawnFruit]);
+  }, [spawnFruit, playSound]);
 
   const checkGameOver = useCallback(() => {
     if (gameOverRef.current) return;
@@ -502,7 +501,7 @@ export default function SuikaGame() {
     }
   }, [dropCurrentFruit, gameState]);
 
-    useEffect(() => {
+  useEffect(() => {
     const localBest = localStorage.getItem('watermelonHighScore');
     if (localBest) {
       setBestScore(parseInt(localBest));
@@ -733,11 +732,11 @@ export default function SuikaGame() {
         </div>
 
         <div className="mt-3 flex items-center justify-between rounded-xl bg-white p-3 shadow">
-         <div className="flex items-center gap-3">
-        <span className="text-sm font-medium text-slate-600">다음 과일</span>
-        <canvas ref={previewRef} className="h-[50px] w-[150px]" />
-        <span className="text-sm font-bold text-slate-800">{FRUITS[nextTiers[0]]?.name}</span>
-      </div>
+          <div className="flex items-center gap-3">
+            <span className="text-sm font-medium text-slate-600">다음 과일</span>
+            <canvas ref={previewRef} className="h-[50px] w-[150px]" />
+            <span className="text-sm font-bold text-slate-800">{FRUITS[nextTiers[0]]?.name}</span>
+          </div>
           <div className="text-xs text-slate-500">
             {gameState === 'playing' ? '터치 후 떼면 떨어져요' : ''}
           </div>
