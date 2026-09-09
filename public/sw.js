@@ -68,7 +68,7 @@ self.addEventListener('fetch', (event) => {
 });
 
 self.addEventListener('push', (event) => {
-  let payload = { title: '수박 합치기', body: '새로운 기록에 도전해 보세요! 🍉' };
+  let payload = { title: '과일 합치기', body: '새로운 기록에 도전해 보세요! 🍉' };
   try {
     if (event.data) {
       payload = event.data.json();
