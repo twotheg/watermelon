@@ -50,6 +50,7 @@ function drawFruit(
   ctx.save();
   ctx.globalAlpha = ghost ? 0.65 : alpha;
 
+  // 1. 기본 바탕 (3D 구형 그라데이션)
   const grad = ctx.createRadialGradient(
     x - radius * 0.3,
     y - radius * 0.3,
@@ -67,6 +68,88 @@ function drawFruit(
   ctx.arc(x, y, radius, 0, Math.PI * 2);
   ctx.fill();
 
+  // 2. 과일별 고유 특징 무늬 및 형상 추가
+  ctx.save();
+  // 공통 좌표 배열 (씨앗, 점 등에 사용)
+  const dots = [[-0.3, -0.4], [0.2, -0.5], [-0.5, 0.1], [0.4, 0.2], [-0.2, 0.6], [0.3, 0.7], [0.6, -0.1]];
+  
+  switch(tier) {
+    case 0: // 블루베리 (꼭지)
+      ctx.fillStyle = '#2E225A';
+      ctx.beginPath();
+      ctx.arc(x, y - radius * 0.8, radius * 0.25, 0, Math.PI * 2);
+      ctx.fill();
+      break;
+    case 1: // 딸기 (씨앗과 잎)
+      ctx.fillStyle = '#FFEB3B';
+      dots.forEach(([dx, dy]) => {
+        ctx.beginPath(); ctx.arc(x + dx * radius, y + dy * radius, radius * 0.08, 0, Math.PI * 2); ctx.fill();
+      });
+      ctx.fillStyle = '#4CAF50';
+      ctx.beginPath();
+      ctx.ellipse(x, y - radius * 0.9, radius * 0.5, radius * 0.2, 0, 0, Math.PI * 2);
+      ctx.fill();
+      break;
+    case 2: // 포도 (알맹이 질감과 꼭지)
+      ctx.fillStyle = 'rgba(255,255,255,0.15)';
+      [[-0.2, -0.2, 0.4], [0.3, -0.1, 0.3], [-0.1, 0.3, 0.35]].forEach(([dx, dy, r]) => {
+        ctx.beginPath(); ctx.arc(x + dx * radius, y + dy * radius, radius * r, 0, Math.PI * 2); ctx.fill();
+      });
+      ctx.strokeStyle = '#795548'; ctx.lineWidth = radius * 0.08;
+      ctx.beginPath(); ctx.moveTo(x, y - radius * 0.9); ctx.lineTo(x, y - radius * 1.3); ctx.stroke();
+      break;
+    case 3: // 오렌지 (껍질 모공)
+      ctx.fillStyle = 'rgba(200, 100, 0, 0.4)';
+      dots.forEach(([dx, dy]) => {
+        ctx.beginPath(); ctx.arc(x + dx * radius, y + dy * radius, radius * 0.05, 0, Math.PI * 2); ctx.fill();
+      });
+      break;
+    case 4: // 레몬 (양끝 튀어나온 형태)
+      ctx.fillStyle = spec.gradient[0];
+      ctx.beginPath(); ctx.arc(x - radius * 0.85, y, radius * 0.3, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(x + radius * 0.85, y, radius * 0.3, 0, Math.PI * 2); ctx.fill();
+      break;
+    case 5: // 배 (점무늬와 꼭지)
+      ctx.fillStyle = 'rgba(100, 100, 0, 0.2)';
+      dots.forEach(([dx, dy]) => {
+        ctx.beginPath(); ctx.arc(x + dx * radius, y + dy * radius, radius * 0.06, 0, Math.PI * 2); ctx.fill();
+      });
+      ctx.strokeStyle = '#795548'; ctx.lineWidth = radius * 0.08;
+      ctx.beginPath(); ctx.moveTo(x, y - radius * 0.9); ctx.lineTo(x + radius * 0.15, y - radius * 1.3); ctx.stroke();
+      break;
+    case 6: // 사과 (꼭지와 잎)
+      ctx.strokeStyle = '#5D4037'; ctx.lineWidth = radius * 0.08;
+      ctx.beginPath(); ctx.moveTo(x, y - radius * 0.9); ctx.lineTo(x + radius * 0.1, y - radius * 1.3); ctx.stroke();
+      ctx.fillStyle = '#4CAF50';
+      ctx.beginPath(); ctx.ellipse(x - radius * 0.2, y - radius * 1.1, radius * 0.3, radius * 0.15, Math.PI / 4, 0, Math.PI * 2); ctx.fill();
+      break;
+    case 7: // 복숭아 (갈라진 선과 잎)
+      ctx.strokeStyle = 'rgba(200, 50, 50, 0.3)'; ctx.lineWidth = radius * 0.06;
+      ctx.beginPath(); ctx.arc(x - radius * 0.2, y, radius, -Math.PI * 0.4, Math.PI * 0.4); ctx.stroke();
+      ctx.fillStyle = '#4CAF50';
+      ctx.beginPath(); ctx.ellipse(x + radius * 0.15, y - radius * 1.0, radius * 0.25, radius * 0.12, -Math.PI / 4, 0, Math.PI * 2); ctx.fill();
+      break;
+    case 8: // 파인애플 (격자무늬와 왕관 잎)
+      ctx.strokeStyle = 'rgba(200, 100, 0, 0.25)'; ctx.lineWidth = radius * 0.05;
+      [-0.6, -0.2, 0.2, 0.6].forEach(offset => {
+        ctx.beginPath(); ctx.moveTo(x - radius, y + offset * radius - radius); ctx.lineTo(x + radius, y + offset * radius + radius); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(x - radius, y + offset * radius + radius); ctx.lineTo(x + radius, y + offset * radius - radius); ctx.stroke();
+      });
+      ctx.fillStyle = '#2E7D32';
+      ctx.beginPath(); ctx.moveTo(x, y - radius * 0.8); ctx.lineTo(x - radius * 0.4, y - radius * 1.4); ctx.lineTo(x, y - radius * 1.1); ctx.lineTo(x + radius * 0.4, y - radius * 1.4); ctx.fill();
+      break;
+    case 9: // 수박 (세로 줄무늬)
+      ctx.strokeStyle = 'rgba(20, 70, 20, 0.5)'; ctx.lineWidth = radius * 0.15;
+      [-0.45, 0, 0.45].forEach(offset => {
+        ctx.beginPath();
+        ctx.ellipse(x + offset * radius, y, radius * 0.25, radius * 0.95, 0, 0, Math.PI * 2);
+        ctx.stroke();
+      });
+      break;
+  }
+  ctx.restore();
+
+  // 3. 빛 반사 하이라이트 (가장 위쪽에 렌더링)
   ctx.fillStyle = 'rgba(255,255,255,0.3)';
   ctx.beginPath();
   ctx.ellipse(
