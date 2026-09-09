@@ -747,6 +747,12 @@ export default function SuikaGame() {
     };
   }, [gameState, checkGameOver, getScale, nextTiers]);
 
+    const installApp = async () => {
+    if (!deferredInstallPrompt) return;
+    await deferredInstallPrompt.prompt();
+    setDeferredInstallPrompt(null);
+  };
+
   // 언어팩 텍스트 
   const text = {
     title: language === 'ko' ? '과일 합치기' : 'Fruit Merge',
