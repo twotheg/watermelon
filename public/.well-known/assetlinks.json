@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.twotheg.fruitmerge",
+        "sha256_cert_fingerprints": ["EA:93:16:73:8E:05:29:7E:3A:57:D7:CC:6B:01:46:43:B5:D1:A0:4C:D0:BF:C4:C2:BF:8B:D4:0E:0E:69:9A:F8"]
+      }
+    }]
