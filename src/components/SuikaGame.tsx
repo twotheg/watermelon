@@ -132,12 +132,19 @@ function drawFruit(
       ctx.fillStyle = '#4CAF50';
       ctx.beginPath(); ctx.ellipse(x + radius * 0.15, y - radius * 1.0, radius * 0.25, radius * 0.12, -Math.PI / 4, 0, Math.PI * 2); ctx.fill();
       break;
-    case 8:
+    case 8: // 파인애플 클리핑 마스크 적용
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.clip(); // 선이 삐져나가지 않도록 가두기
+
       ctx.strokeStyle = 'rgba(200, 100, 0, 0.25)'; ctx.lineWidth = radius * 0.05;
       [-0.6, -0.2, 0.2, 0.6].forEach(offset => {
         ctx.beginPath(); ctx.moveTo(x - radius, y + offset * radius - radius); ctx.lineTo(x + radius, y + offset * radius + radius); ctx.stroke();
         ctx.beginPath(); ctx.moveTo(x - radius, y + offset * radius + radius); ctx.lineTo(x + radius, y + offset * radius - radius); ctx.stroke();
       });
+      ctx.restore(); // 마스크 해제
+
       ctx.fillStyle = '#2E7D32';
       ctx.beginPath(); ctx.moveTo(x, y - radius * 0.8); ctx.lineTo(x - radius * 0.4, y - radius * 1.4); ctx.lineTo(x, y - radius * 1.1); ctx.lineTo(x + radius * 0.4, y - radius * 1.4); ctx.fill();
       break;
@@ -220,10 +227,8 @@ export default function SuikaGame() {
   const [bestScore, setBestScore] = useState(0);
   const [nextTiers, setNextTiers] = useState<number[]>([0, 0, 0]);
   const [isSoundOn, setIsSoundOn] = useState(true);
-  const [language, setLanguage] = useState<'ko' | 'en'>('ko'); // 언어 상태 추가
+  const [language, setLanguage] = useState<'ko' | 'en'>('ko'); 
   const [gameState, setGameState] = useState<'ready' | 'playing' | 'over'>('ready');
-  const [playerName, setPlayerName] = useState('');
-  const [rankStatus, setRankStatus] = useState<'newBest' | 'saved' | 'error' | ''>('');
 
   const toggleSound = () => {
     setIsSoundOn(!isSoundOn);
@@ -433,7 +438,6 @@ export default function SuikaGame() {
     scoreRef.current = 0;
     dropsRef.current = 0;
     setScore(0);
-    setRankStatus('');
     gameOverRef.current = false;
     canSpawnRef.current = true;
     spawnCooldownRef.current = 0;
@@ -556,29 +560,6 @@ export default function SuikaGame() {
     }
   }, [bestScore]);
 
-  const saveScore = useCallback(async () => {
-    try {
-      await fetch('/api/score', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          name: playerName || (language === 'ko' ? '익명' : 'Anonymous'), 
-          score: scoreRef.current 
-        }),
-      });
-      const res = await fetch('/api/score?limit=1');
-      const data = await res.json();
-      const top = data.scores?.[0]?.score ?? 0;
-      if (scoreRef.current >= top) {
-        setRankStatus('newBest');
-      } else {
-        setRankStatus('saved');
-      }
-    } catch {
-      setRankStatus('error');
-    }
-  }, [playerName, language]);
-
   const updatePointerX = useCallback((clientX: number) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -616,16 +597,6 @@ export default function SuikaGame() {
     if (localBest) {
       setBestScore(parseInt(localBest));
     }
-    fetch('/api/score?limit=1')
-      .then((r) => r.json())
-      .then((data) => {
-        const top = data.scores?.[0]?.score ?? 0;
-        if (top > parseInt(localBest || '0')) {
-          setBestScore(top);
-          localStorage.setItem('watermelonHighScore', top.toString());
-        }
-      })
-      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -747,7 +718,7 @@ export default function SuikaGame() {
     };
   }, [gameState, checkGameOver, getScale, nextTiers]);
 
-    const installApp = async () => {
+  const installApp = async () => {
     if (!deferredInstallPrompt) return;
     await deferredInstallPrompt.prompt();
     setDeferredInstallPrompt(null);
@@ -763,8 +734,6 @@ export default function SuikaGame() {
     desc2: language === 'ko' ? '같은 과일끼리 합쳐 수박을 만들어 보세요!' : 'merge them to make a watermelon!',
     start: language === 'ko' ? '게임 시작' : 'Start Game',
     gameOver: language === 'ko' ? '게임 오버' : 'Game Over',
-    name: language === 'ko' ? '이름' : 'Name',
-    save: language === 'ko' ? '기록 저장' : 'Save Score',
     retry: language === 'ko' ? '다시 하기' : 'Play Again',
     install: language === 'ko' ? '📲 홈 화면에 설치' : '📲 Install App'
   };
@@ -831,30 +800,13 @@ export default function SuikaGame() {
 
           {gameState === 'over' && (
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 p-6 text-center text-white backdrop-blur-sm">
-              <h2 className="mb-1 text-3xl font-bold">{text.gameOver}</h2>
-              <p className="mb-4 text-2xl font-semibold text-yellow-300">{score.toLocaleString()}</p>
-              <input
-                value={playerName}
-                onChange={(e) => setPlayerName(e.target.value)}
-                maxLength={10}
-                className="mb-3 w-40 rounded-lg px-3 py-2 text-center text-slate-900 outline-none focus:ring-2 focus:ring-green-400"
-                placeholder={text.name}
-              />
+              <h2 className="mb-2 text-3xl font-bold">{text.gameOver}</h2>
+              <p className="mb-8 text-4xl font-semibold text-yellow-300">{score.toLocaleString()}</p>
               
-              {rankStatus === 'newBest' && <p className="mb-2 text-sm text-green-200">{language === 'ko' ? '🏆 현재 최고 기록입니다!' : '🏆 New High Score!'}</p>}
-              {rankStatus === 'saved' && <p className="mb-2 text-sm text-green-200">{language === 'ko' ? '기록이 저장되었어요!' : 'Score saved!'}</p>}
-              {rankStatus === 'error' && <p className="mb-2 text-sm text-red-300">{language === 'ko' ? '기록 저장에 실패했어요.' : 'Failed to save score.'}</p>}
-
-              <div className="flex gap-3 mt-2">
-                <button
-                  onClick={saveScore}
-                  className="rounded-full bg-blue-500 px-5 py-2 font-semibold shadow hover:bg-blue-600"
-                >
-                  {text.save}
-                </button>
+              <div className="flex justify-center mt-2">
                 <button
                   onClick={startGame}
-                  className="rounded-full bg-green-500 px-5 py-2 font-semibold shadow hover:bg-green-600"
+                  className="rounded-full bg-[#2ECC71] px-10 py-3 text-lg font-bold shadow-lg hover:bg-green-500 transition hover:scale-105 active:scale-95"
                 >
                   {text.retry}
                 </button>
@@ -885,3 +837,4 @@ export default function SuikaGame() {
     </div>
   );
 }
+
