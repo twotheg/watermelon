@@ -829,7 +829,7 @@ export default function SuikaGame() {
           <div className="w-full max-w-[320px] h-[50px] bg-slate-200 flex items-center justify-center rounded-lg shadow-inner overflow-hidden">
             <ins className="adsbygoogle"
                  style={{ display: "inline-block", width: "320px", height: "50px" }}
-                 data-ad-client="ca-pub-여기에본인클라이언트ID입력"
+                 data-ad-client="ca-pub-4424569297437395"
                  data-ad-slot="여기에슬롯ID입력"></ins>
           </div>
         </div>
