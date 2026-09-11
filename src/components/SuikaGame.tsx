@@ -148,13 +148,24 @@ function drawFruit(
       ctx.fillStyle = '#2E7D32';
       ctx.beginPath(); ctx.moveTo(x, y - radius * 0.8); ctx.lineTo(x - radius * 0.4, y - radius * 1.4); ctx.lineTo(x, y - radius * 1.1); ctx.lineTo(x + radius * 0.4, y - radius * 1.4); ctx.fill();
       break;
-    case 9:
+        case 9:
+      // --- 마스크 시작 ---
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(x, y, radius, 0, Math.PI * 2);
+      ctx.clip(); 
+      // -----------------
+
       ctx.strokeStyle = 'rgba(20, 70, 20, 0.5)'; ctx.lineWidth = radius * 0.15;
       [-0.45, 0, 0.45].forEach(offset => {
         ctx.beginPath();
         ctx.ellipse(x + offset * radius, y, radius * 0.25, radius * 0.95, 0, 0, Math.PI * 2);
         ctx.stroke();
       });
+
+      // --- 마스크 해제 ---
+      ctx.restore(); 
+      // -----------------
       break;
   }
   ctx.restore();
