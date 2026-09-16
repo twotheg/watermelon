@@ -841,7 +841,7 @@ export default function SuikaGame() {
             <ins className="adsbygoogle"
                  style={{ display: "inline-block", width: "320px", height: "50px" }}
                  data-ad-client="ca-pub-4424569297437395"
-                 data-ad-slot="여기에슬롯ID입력"></ins>
+                 data-ad-slot="4711325602"></ins>
           </div>
         </div>
       </main>
