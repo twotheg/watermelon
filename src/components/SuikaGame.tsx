@@ -619,6 +619,18 @@ export default function SuikaGame() {
     return () => window.removeEventListener('beforeinstallprompt', handler);
   }, []);
 
+  // 구글 애드센스 광고 실행 코드 추가
+  useEffect(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        (window as any).adsbygoogle = (window as any).adsbygoogle || [];
+        (window as any).adsbygoogle.push({});
+      }
+    } catch (error) {
+      console.error('AdSense error:', error);
+    }
+  }, []);
+
   useEffect(() => {
     if (gameState !== 'playing') {
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
@@ -848,4 +860,3 @@ export default function SuikaGame() {
     </div>
   );
 }
-
