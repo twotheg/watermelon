@@ -856,6 +856,49 @@ export default function SuikaGame() {
                  data-ad-slot="4711325602"></ins>
           </div>
         </div>
+                {/* 하단 유틸 및 광고 배너 */}
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          {deferredInstallPrompt && (
+            <button
+              onClick={installApp}
+              className="rounded-full bg-purple-500 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-purple-600 mb-2"
+            >
+              {text.install}
+            </button>
+          )}
+          
+          <div className="w-full max-w-[320px] h-[50px] bg-slate-200 flex items-center justify-center rounded-lg shadow-inner overflow-hidden">
+            <ins className="adsbygoogle"
+                 style={{ display: "inline-block", width: "320px", height: "50px" }}
+                 data-ad-client="ca-pub-4424569297437395"
+                 data-ad-slot="4711325602"></ins>
+          </div>
+        </div>
+
+        {/* 구글 애드센스 봇 통과용 텍스트 */}
+        <div className="mt-8 rounded-xl bg-white p-6 shadow-md text-slate-700 text-sm text-left w-full max-w-[420px] mx-auto">
+          <h2 className="text-xl font-bold text-green-700 mb-4">과일 합치기(Fruit Merge) 게임 소개</h2>
+          <p className="mb-3 leading-relaxed">
+            과일 합치기는 누구나 쉽고 재미있게 즐길 수 있는 중독성 강한 캐주얼 퍼즐 게임입니다. 떨어지는 과일의 위치를 전략적으로 조절하고, 같은 종류의 과일을 부딪혀 더 크고 새로운 과일로 진화시켜 보세요. 남녀노소 누구나 즐길 수 있는 두뇌 게임입니다.
+          </p>
+
+          <h3 className="text-lg font-bold mt-4 mb-2 text-slate-800">🎮 게임 방법 및 플레이 팁</h3>
+          <ul className="list-disc pl-5 mb-3 space-y-1 text-slate-600">
+            <li>화면을 터치하여 과일을 원하는 위치에 떨어뜨립니다.</li>
+            <li>동일한 크기의 과일 두 개가 만나면 더 큰 과일로 병합(Merge)됩니다.</li>
+            <li>상단 빨간색 경계선을 넘지 않도록 주의하며 공간을 효율적으로 활용하세요.</li>
+            <li>가장 큰 과일인 '수박'을 만드는 것이 최종 목표입니다! 높은 점수에 도전하세요.</li>
+          </ul>
+
+          <h3 className="text-lg font-bold mt-4 mb-2 text-slate-800">🔄 과일 진화 순서</h3>
+          <p className="mb-3 text-slate-600 font-medium">
+            블루베리 ➔ 딸기 ➔ 포도 ➔ 귤 ➔ 레몬 ➔ 배 ➔ 사과 ➔ 복숭아 ➔ 파인애플 ➔ 🍉수박
+          </p>
+
+          <p className="text-xs text-slate-400 mt-6 pt-4 border-t border-slate-100 leading-relaxed">
+            * 이 게임은 앱 설치 없이 웹 브라우저에서 바로 실행되는 PWA(Progressive Web App)를 지원합니다. 스마트폰 홈 화면에 추가하여 언제 어디서나 오프라인에서도 원활하게 게임을 즐겨보세요! 기록은 기기에 안전하게 보관됩니다.
+          </p>
+        </div>
       </main>
     </div>
   );
