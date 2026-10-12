@@ -3,6 +3,6 @@
       "target": {
         "namespace": "android_app",
         "package_name": "com.twotheg.fruitmerge",
-        "sha256_cert_fingerprints": ["EA:93:16:73:8E:05:29:7E:3A:57:D7:CC:6B:01:46:43:B5:D1:A0:4C:D0:BF:C4:C2:BF:8B:D4:0E:0E:69:9A:F8"]
+        "sha256_cert_fingerprints": ["E6:20:F5:9D:C9:17:37:4A:58:6C:55:DA:11:93:64:F8:7C:9C:71:DC:00:85:5D:44:64:1D:AB:F3:1A:27:FA:7A"]
       }
     }]
