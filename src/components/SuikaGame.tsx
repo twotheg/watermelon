@@ -212,7 +212,7 @@ export default function SuikaGame() {
   const previewRef = useRef<HTMLCanvasElement>(null);
 
   const worldRef = useRef<World | null>(null);
-  const bodiesRef = useRef>>(new Map());
+  const bodiesRef = useRef<any>(new Map());
   const nextIdRef = useRef(1);
   const currentFruitRef = useRef<{ id: number; tier: number; body: ReturnType<World['createBody']> } | null>(null);
   const nextTierRef = useRef(0);
@@ -221,7 +221,7 @@ export default function SuikaGame() {
   const gameOverRef = useRef(false);
   const canSpawnRef = useRef(true);
   const spawnCooldownRef = useRef(0);
-  const overTimesRef = useRef>(new Map());
+  const overTimesRef = useRef<any>(new Map());
   const particlesRef = useRef<Particle[]>([]);
   const pendingMergesRef = useRef<Set<string>>(new Set());
   const rafRef = useRef<number | null>(null);
